@@ -1,0 +1,16 @@
+{
+    "name": "AU Post Package AutoFill",
+    "version": "1.0",
+    "manifest_version": 2,
+    "content_scripts": [
+        {
+            "matches": [
+                "https://auspost.com.au/mypost-business/shipping-and-tracking/orders/add/retail"
+            ],
+            "run_at": "document_idle",
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
