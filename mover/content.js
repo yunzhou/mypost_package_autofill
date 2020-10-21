@@ -1,10 +1,25 @@
 console.log("Content running...");
+const PRE_DEFINED_PACKAGE = {
+    //pyramid
+    4667217150033: { weight: 8.3, length: 45, width: 45, height: 14, extraCover: 300 }, 
+    //rome
+    4664244699217: { weight: 5.6, length: 48, width: 46, height: 7, extraCover: 200 }, 
+    // 1001 nights
+    4664226611281: { weight: 5.6, length: 48, width: 46, height: 7, extraCover: 200 }, 
+     // xiao ke ai
+    4656888774737: { weight: 3.1, length: 46, width: 40, height: 8, extraCover: 200 },
+    //Wooden Rainbow Car & Peg Dolls Playset
+    4667225800785: { weight: 1.0, length: 23, width: 16, height: 13, extraCover: 0 },
+}
+
 var orderData = null;
 chrome.runtime.onMessage.addListener(
     function (request, sender, sendResponse) {
         console.log("Received message: " + request.message);
         if (request.message === "fill_order_data") {
             orderData = request.data;
+            console.log("content");
+            console.log(orderData);
             function JS_wait() {
                 if ($('form.shipping-form').length && $('#parcel-details').length) {
                     populateMyPostForm(orderData);
@@ -20,8 +35,8 @@ chrome.runtime.onMessage.addListener(
 );
 
 document.addEventListener('keypress', event => {
-    // alert('key pressed', event.code)
-    if (event.altKey && event.code == 'KeyP') {
+    // alert('key pressed', event.code);
+    if (event.shiftKey && event.code == 'Backslash') {
         var currentUrl = window.location.href;
         var location = new URL(currentUrl)
         // Build url
@@ -65,6 +80,7 @@ function raiseBlurEvent(elementSelector) {
 
 function populateMyPostForm(data) {
     console.log("start populating form");
+    console.log(data);
     const manualAddressSwitchSelector = "recipientDetailsForm-addressForm > ng-form > div > button";
     const countrySelector = "recipientDetailsForm-country-select";
     const businessNameSelector = "recipientDetailsForm-businessName";
@@ -95,7 +111,11 @@ function populateMyPostForm(data) {
     const phoneSelector = "recipientDetailsForm-phone";
     const labelReferenceSelector = "additionalDetailsForm-domestic-labelInformation";
     const weightDomesticSelector = "parcelDetailsForm-domestic-parcelDimensionsForm-weight";
-
+    const lengthDomesticSelector = "parcelDetailsForm-domestic-parcelDimensionsForm-length"
+    const widthDomesticSelector = "parcelDetailsForm-domestic-parcelDimensionsForm-width"
+    const heightDomesticSelector = "parcelDetailsForm-domestic-parcelDimensionsForm-height"
+    const trackingSelector = "recipientDetailsForm-tracking";
+    const saveAddressSelector = "recipientDetailsForm-save";
     // Delivery Country
     var countryCode = "string:" + data.shipping_address.country_code;
     var countryOptgroup = $('#' + countrySelector + ' optgroup[label = "A to Z index"]');
@@ -105,7 +125,10 @@ function populateMyPostForm(data) {
 
     // switch to manual address entry
     $('#' + manualAddressSwitchSelector).click();
-
+    // send tracking information
+    $('#' + trackingSelector).click();
+    // save address 
+    $('#' + saveAddressSelector).click();
     setTextValue(nameSelector, data.shipping_address.name); // Delivery Name
     setTextValue(businessNameSelector, data.shipping_address.company); // Delivery Business Name
     setTextValue(emailSelector, data.email); // Contact Email
@@ -120,16 +143,31 @@ function populateMyPostForm(data) {
         setTextValue(postcodeDomesticSelector, data.shipping_address.zip); // Delivery Postcode
 
         setTextValue(dangerousDomesticGoodSelector, "boolean:false"); // Default to non-dangerous
-        setTextValue(weightDomesticSelector, data.total_weight / 1000); // Parcel weight in KG    
+
         setTextValue(labelReferenceSelector, data.name); // Parcel Reference
         setTextValue(parcelDomesticDescriptionSelector, data.line_items.map(function (item) { return item.sku; }).join(",")); // Parcel description 
         window.setTimeout(function () {
             // Parcel service 
-            var optgroup = $('#' + packageTypeDomesticSelector + ' optgroup[label = "Australia Post Flat Rate Satchel (max 5kg)"]');
-            var option = optgroup.find('option[value="string:PKSS"]');
+            var option = $('#' + packageTypeDomesticSelector + ' option[value="string:PKOWN"]');
             option.attr('selected', true);
             raiseChangeEvent(packageTypeDomesticSelector);
         }, 1000);
+        window.setTimeout(function () {
+            //switch to auto again
+            $('#' + manualAddressSwitchSelector).click();
+        }, 1000)
+
+        
+        if (data.line_items.length == 1 && data.line_items[0].product_id in PRE_DEFINED_PACKAGE ) {
+            const product_id = data.line_items[0].product_id;
+            //parcel detail
+            setTextValue(weightDomesticSelector, PRE_DEFINED_PACKAGE[product_id].weight); 
+            setTextValue(lengthDomesticSelector, PRE_DEFINED_PACKAGE[product_id].length); 
+            setTextValue(widthDomesticSelector, PRE_DEFINED_PACKAGE[product_id].width); 
+            setTextValue(heightDomesticSelector, PRE_DEFINED_PACKAGE[product_id].height); 
+        }else{
+            setTextValue(weightDomesticSelector, data.total_weight / 1000); // Parcel weight in KG    
+        }
 
     } else {
         console.log("International Delivery");

@@ -28,7 +28,8 @@ chrome.runtime.onMessage.addListener(
                                     chrome.tabs.update(tab.id, {url: formUrl});
                                 }
                             });
-                            orderData = request.data;
+                            console.log(data.order.id);
+                            orderData = data.order;
                         }
                         )
                     })
@@ -48,6 +49,7 @@ chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
             "message": "fill_order_data",
             "data": orderData
         });
+        orderData=null;
     }
     return true;
 });
