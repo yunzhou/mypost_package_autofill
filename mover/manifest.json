@@ -7,7 +7,7 @@
    },
    "content_scripts": [ {
       "js": [ "jquery-3.4.1.min.js", "content.js" ],
-      "matches": [ "*://*.myshopify.com/admin/*", "https://auspost.com.au/mypost-business/shipping-and-tracking/orders/add/retail" ]
+      "matches": [ "https://*/*","*://*.myshopify.com/admin/*", "https://auspost.com.au/mypost-business/shipping-and-tracking/orders/add/retail" ]
    } ],
    "description": "YUN Import order from Shopify to MyPost Business with a single click.",
    "icons": {

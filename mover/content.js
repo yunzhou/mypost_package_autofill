@@ -34,9 +34,9 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-document.addEventListener('keypress', event => {
-    // alert('key pressed', event.code);
+document.addEventListener('keydown', event => {
     if (event.shiftKey && event.code == 'Backslash') {
+        console.log(event)
         var currentUrl = window.location.href;
         var location = new URL(currentUrl)
         // Build url

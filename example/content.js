@@ -36,18 +36,23 @@ function simulateOptionSelect(field, value) {
     }
 }
 
-document.addEventListener('keypress', event => {
+document.addEventListener('keydown', event => {
     const pressedKey = event.code
     const altKey = event.altKey
+    const ctrlKey = event.ctrlKey
+    console.log("=====================");
+    console.log(event);
+    console.log(altKey);
     if (altKey && pressedKey in SHORTCUT) {
+        console.log("alt =====================");
         // Send tracking notifications to this recipient (optional) 
         const trackEmail = document.querySelector("#recipientDetailsForm-tracking");
         simulateCheckboxType(trackEmail, true);
         // Save this address
         const saveAddress = document.querySelector("#recipientDetailsForm-save");
         simulateCheckboxType(saveAddress, true);
-
-        const pacakgeType = document.querySelector("#parcelDetailsForm-domestic-packagingType");
+/* 
+        const pacakgeType = document.querySelector("#parcelD */etailsForm-domestic-packagingType");
         simulateOptionSelect(pacakgeType, "string:PKOWN");
         
         if (pressedKey != "f") {
