@@ -144,7 +144,8 @@ function populateMyPostForm(data) {
 
         setTextValue(dangerousDomesticGoodSelector, "boolean:false"); // Default to non-dangerous
 
-        setTextValue(labelReferenceSelector, data.name); // Parcel Reference
+        setTextValue(labelReferenceSelector, "Joykids"+data.name); // Parcel Reference
+
         setTextValue(parcelDomesticDescriptionSelector, data.line_items.map(function (item) { return item.sku; }).join(",")); // Parcel description 
         window.setTimeout(function () {
             // Parcel service 
